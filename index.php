@@ -2,9 +2,9 @@
 require "mail.php";
 require "recaptcha.php";
 
-if (isset($_POST['btn'])) {
-        $captcha = new recaptcha('PUBLIC KEY', 'SECRET KEY');
+$captcha = new recaptcha('PUBLIC KEY', 'SECRET KEY');
 
+if (isset($_POST['btn'])) {
         if (empty($_POST['name'])) {
             $errors['empty-name'] = 'Le nom n\'a pas été remplie !' ;
         }
@@ -39,7 +39,7 @@ if (isset($_POST['btn'])) {
                     $mail->nameSender = "name of sender";
                     $mail->recipient = "recipient@domain.com";
                     $mail->object = "Object";
-                    $mail->htmlMessage = "<h1>New message</h1> <ul><li>Name : ".$_POST['name']."</li><li>Email : ".$_POST['email']."</li><li>Email : ".$_POST['object']."</li><li>Message : <p>".$_POST['message']."</p></li><li>Ip : ".$_SERVER['REMOTE_ADDR']."</li><li>PostTime : ".date('d-m-Y').' // '.date('H:i')."</li></ul>";
+                    $mail->htmlMessage = "<h1>New message</h1> <ul><li>Name : ".$_POST['name']."</li><li>Email : ".$_POST['email']."</li><li>Object : ".$_POST['object']."</li><li>Message : <p>".$_POST['message']."</p></li><li>Ip : ".$_SERVER['REMOTE_ADDR']."</li><li>PostTime : ".date('d-m-Y').' // '.date('H:i')."</li></ul>";
                     $mail->sendMail();
                 }
                 $success = true;
@@ -52,6 +52,7 @@ if (isset($_POST['btn'])) {
 if (isset($errors) && !empty($errors))
 {
 ?>
+<?= $captcha->getScript() ?>
 <div class="alert alert-danger">
     <?= implode('<br>', $errors); ?>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -71,6 +72,7 @@ if (isset($success) && $success == true) {
 <?php
 }
 ?>
+<?= $captcha->getScript() ?>
 <form class="form-contact" action="" method="post">
     <div class="form-group row">
         <div class="col-md-6 form-group">
@@ -85,6 +87,9 @@ if (isset($success) && $success == true) {
     </div>
     <div class="form-group">
         <textarea type="text" class="form-control" placeholder="Votre message" name="message" required><?php if(isset($errors)){echo $_POST['message'];}?></textarea> 
+    </div>
+    <div class="form-group">
+        <?= $captcha->getHtml() ?>
     </div>
     <button class="btn btn-primary" name="btn">
         Envoyer
